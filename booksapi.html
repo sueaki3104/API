@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>googleBooksAPI</title>
+</head>
+
+<body>
+
+  <h1>google books API</h1>
+  <input type="text" id="title">
+  <button id="btn">データ取得</button>
+  <div id="output"></div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!-- axiosライブラリの読み込み -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+    $('#btn').on('click', function () {
+      const title = $('#title').val();
+      // リクエストを送るurlを準備
+      const requestUrl = `https://www.googleapis.com/books/v1/volumes?q=intitle:${title}`;
+      axios
+        .get(requestUrl)//getはこの一行だけ
+        .then(function (response) {
+          // 上手く行ったときの処理
+          console.log(response);//console.logに”鬼滅の刃”に反応した分だけ表示
+
+          // console.log(response.data.items[0].volumeInfo.title);//←検索結果の０番のタイトルを表示
+
+          // 検索結果に出てくる番号の全てをhtmlに表示
+          // const htmlElements = [];
+          // for (let i = 0; i < response.data.items.length; i++) {
+          //   htmlElements.push(`<p>${response.data.items[i].volumeInfo.title}</p>`);
+
+          // 検索結果に出てくる全ての指定したリンクを表示
+          // const htmlElements = [];
+          // for (let i = 0; i < response.data.items.length; i++) {
+          //   htmlElements.push(`<p>${response.data.items[i].volumeInfo.previewLink}</p>`);
+
+          // 検索結果に出てくる全ての指定したリンクの画像を表示
+
+          // 画像が出るのはこれではなかった
+          // const htmlElements = [];
+          // for (let i = 0; i < response.data.items.length; i++) {
+          //   htmlElements.push(`<img src = ${response.data.items[i].volumeInfo.imageLinks.smallThumbnail} ></img>`);
+          //　全てに画像があるとは限らない。画像が無いものも同時に検索する場合、？が必要となる（オプショナルチェーン）
+          // const htmlElements = [];
+          // for (let i = 0; i < response.data.items.length; i++) {
+          //   htmlElements.push(`<img src = "${response.data.items[i].volumeInfo.imageLinks?.smallThumbnail}" ></img>`);
+
+          //表示した画像をクリックしたら、大元もデータに飛ぶ仕様
+          const htmlElements = [];
+          for (let i = 0; i < response.data.items.length; i++) {
+            htmlElements.push(`<a href = "${response.data.items[i].volumeInfo.infoLink}" target="_blank"> <img src="${response.data.items[i].volumeInfo.imageLinks?.smallThumbnail}" ></a>`);
+
+          }
+          $('#output').html(htmlElements);
+        })
+        .catch(function (error) {
+          // 失敗したときの処理
+          console.log(error);
+        })
+        .finally(function () {
+          // 成否関わらず実行される処理
+          console.log('done!')
+        });
+    });
+  </script>
+</body>
+
+</html>
